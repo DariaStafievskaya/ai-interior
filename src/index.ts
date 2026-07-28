@@ -1,0 +1,1 @@
+console.log("🚀 AI Interior успешно запущен!");

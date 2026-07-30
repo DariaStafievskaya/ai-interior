@@ -1,1 +1,1 @@
-console.log("🚀 AI Interior успешно запущен!");
+import "./bot";

@@ -4,6 +4,20 @@ import { registerHandlers } from "./handlers";
 
 const bot = new Bot(config.botToken);
 
+// Глобальный обработчик ошибок
+bot.catch(async (error) => {
+  console.error("Ошибка бота:");
+  console.error(error.error);
+
+  try {
+    await error.ctx.reply(
+      "⚠️ Во время обработки запроса произошла ошибка.\n\nПопробуйте еще раз позже."
+    );
+  } catch {
+    console.error("Не удалось отправить сообщение об ошибке пользователю.");
+  }
+});
+
 // Подключаем все обработчики проекта
 registerHandlers(bot);
 
@@ -18,11 +32,6 @@ async function main() {
   await bot.init();
 
   console.log("ID бота:", bot.botInfo.id);
-
-  bot.on("message", (ctx) => {
-    console.log("Получено сообщение:", ctx.message.text);
-  });
-
   console.log("Ждем сообщения...");
 
   await bot.start({
@@ -32,4 +41,7 @@ async function main() {
   });
 }
 
-main().catch(console.error);
+main().catch((error) => {
+  console.error("Критическая ошибка запуска:");
+  console.error(error);
+});

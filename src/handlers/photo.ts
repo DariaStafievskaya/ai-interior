@@ -5,7 +5,12 @@ import { generateInterior } from "../services/ai";
 export function registerPhotoHandler(bot: Bot) {
   bot.on("message:photo", async (ctx) => {
     const photos = ctx.message.photo;
-    const photo = photos[photos.length - 1];
+    const photo = photos.at(-1);
+
+    if (!photo) {
+      await ctx.reply("Не удалось получить фотографию. Попробуйте еще раз.");
+      return;
+    }
 
     console.log("Получено фото:");
     console.log("file_id:", photo.file_id);

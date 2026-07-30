@@ -1,13 +1,14 @@
 import { Api } from "grammy";
 import { rm, stat } from "node:fs/promises";
 import { downloadTelegramPhoto } from "./telegram";
-import { generateInterior } from "./ai";
+import { generateInterior, type GeneratedImage } from "./ai";
+import type { GenerationContext } from "./user-session";
 
 const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
 
 type InteriorGenerationSuccess = {
   readonly ok: true;
-  readonly uploadedImageUrl: string;
+  readonly generatedImage: GeneratedImage;
   readonly message: string;
 };
 
@@ -22,7 +23,8 @@ export type InteriorGenerationResult =
 
 export async function processInteriorGeneration(
   api: Api,
-  fileId: string
+  fileId: string,
+  generationContext: GenerationContext
 ): Promise<InteriorGenerationResult> {
   let localPath: string | undefined;
 
@@ -30,13 +32,12 @@ export async function processInteriorGeneration(
     localPath = await downloadTelegramImage(api, fileId);
     await validateDownloadedImage(localPath);
 
-    const uploadedImageUrl = await uploadImageToFal(localPath);
+    const generatedImage = await generateInteriorImage(localPath, generationContext);
 
     return {
       ok: true,
-      uploadedImageUrl,
-      message:
-        "🤖 Изображение передано в AI.\n\nСледующим шагом мы подключим настоящий Fal.ai.",
+      generatedImage,
+      message: "✅ Готово! Вот новый вариант интерьера.",
     };
   } catch (error) {
     console.error("Ошибка обработки изображения:", error);
@@ -86,11 +87,14 @@ async function validateDownloadedImage(imagePath: string): Promise<void> {
   }
 }
 
-async function uploadImageToFal(imagePath: string): Promise<string> {
+async function generateInteriorImage(
+  imagePath: string,
+  generationContext: GenerationContext
+): Promise<GeneratedImage> {
   try {
-    return await generateInterior(imagePath);
+    return await generateInterior(imagePath, generationContext);
   } catch (error) {
-    throw new Error("Не удалось передать изображение в AI. Попробуйте позже.", {
+    throw new Error("Не удалось сгенерировать интерьер через AI. Попробуйте позже.", {
       cause: error,
     });
   }

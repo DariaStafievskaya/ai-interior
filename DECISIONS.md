@@ -65,13 +65,13 @@ Accepted
 
 ## Decision
 
-Use Fal.ai as the image generation provider.
+Use OpenAI as the image generation provider.
 
 ## Reason
 
-- supports modern image models
-- simple integration
-- scalable API
+- supports image editing from an uploaded room photo
+- returns generated image data directly to the bot
+- keeps AI provider logic inside the services layer
 
 ---
 

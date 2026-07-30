@@ -1,9 +1,17 @@
 import { Bot } from "grammy";
-import { startKeyboard } from "../keyboards/start";
+import { createRoomKeyboard } from "../keyboards/project";
+import { startUserProject } from "../services/user-session";
 
 export function registerStartHandler(bot: Bot) {
   bot.command("start", async (ctx) => {
     console.log("Команда /start получена!");
+
+    if (!ctx.from) {
+      await ctx.reply("Не удалось определить пользователя. Попробуйте еще раз.");
+      return;
+    }
+
+    startUserProject(ctx.from.id);
 
     await ctx.reply(
       [
@@ -11,17 +19,12 @@ export function registerStartHandler(bot: Bot) {
         "",
         "Добро пожаловать!",
         "",
-        "Я помогу создать новый дизайн вашего интерьера с помощью искусственного интеллекта.",
+        "Я помогу создать новый дизайн вашей комнаты с помощью искусственного интеллекта.",
         "",
-        "Что я умею:",
-        "• менять стиль комнаты",
-        "• предлагать варианты дизайна",
-        "• вдохновлять новыми идеями",
-        "",
-        "Нажмите кнопку ниже, чтобы начать."
+        "Сначала выберите комнату для проекта.",
       ].join("\n"),
       {
-        reply_markup: startKeyboard,
+        reply_markup: createRoomKeyboard(),
       }
     );
   });

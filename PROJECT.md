@@ -20,7 +20,7 @@ Bot validates image
 
 ↓
 
-Image uploads to Fal.ai
+Image generation with OpenAI
 
 ↓
 
@@ -57,7 +57,7 @@ Telegram
 
 AI
 
-- Fal.ai
+- OpenAI
 
 Package Manager
 
@@ -168,7 +168,7 @@ Contains business logic.
 
 Examples:
 
-- Fal.ai
+- OpenAI
 - image processing
 - file storage
 - generation pipeline
@@ -245,7 +245,7 @@ Temporary storage
 
 ↓
 
-Upload to Fal.ai
+Generate image with OpenAI
 
 ↓
 
@@ -303,7 +303,7 @@ Communication with users.
 
 ---
 
-Fal.ai
+OpenAI
 
 Purpose:
 
@@ -325,7 +325,9 @@ Expected variables:
 
 BOT_TOKEN
 
-FAL_KEY
+OPENAI_API_KEY
+OPENAI_IMAGE_MODEL
+OPENAI_IMAGE_SIZE
 
 Future variables:
 
@@ -452,7 +454,7 @@ Telegram MVP
 Current priorities:
 
 - stable build
-- Fal.ai generation
+- OpenAI image generation
 - clean architecture
 
 ---

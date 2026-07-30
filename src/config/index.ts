@@ -1,23 +1,21 @@
 import "dotenv/config";
 
 const botToken = process.env.BOT_TOKEN;
-const falKey = process.env.FAL_KEY;
-const falModel = process.env.FAL_MODEL;
+const openaiApiKey = process.env.OPENAI_API_KEY;
+const openaiImageModel = process.env.OPENAI_IMAGE_MODEL ?? "gpt-image-1";
+const openaiImageSize = process.env.OPENAI_IMAGE_SIZE ?? "1024x1024";
 
 if (!botToken) {
   throw new Error("BOT_TOKEN не найден");
 }
 
-if (!falKey) {
-  throw new Error("FAL_KEY не найден");
-}
-
-if (!falModel) {
-  throw new Error("FAL_MODEL не найден");
+if (!openaiApiKey) {
+  throw new Error("OPENAI_API_KEY не найден");
 }
 
 export const config = {
   botToken,
-  falKey,
-  falModel,
+  openaiApiKey,
+  openaiImageModel,
+  openaiImageSize,
 };

@@ -1,13 +1,13 @@
 import { Api } from "grammy";
 import { rm, stat } from "node:fs/promises";
 import { downloadTelegramPhoto } from "./telegram";
-import { generateInterior } from "./ai";
+import { generateInterior, type GeneratedImage } from "./ai";
 
 const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
 
 type InteriorGenerationSuccess = {
   readonly ok: true;
-  readonly uploadedImageUrl: string;
+  readonly generatedImage: GeneratedImage;
   readonly message: string;
 };
 
@@ -30,13 +30,12 @@ export async function processInteriorGeneration(
     localPath = await downloadTelegramImage(api, fileId);
     await validateDownloadedImage(localPath);
 
-    const uploadedImageUrl = await uploadImageToFal(localPath);
+    const generatedImage = await generateInteriorImage(localPath);
 
     return {
       ok: true,
-      uploadedImageUrl,
-      message:
-        "🤖 Изображение передано в AI.\n\nСледующим шагом мы подключим настоящий Fal.ai.",
+      generatedImage,
+      message: "✅ Готово! Вот новый вариант интерьера.",
     };
   } catch (error) {
     console.error("Ошибка обработки изображения:", error);
@@ -86,11 +85,11 @@ async function validateDownloadedImage(imagePath: string): Promise<void> {
   }
 }
 
-async function uploadImageToFal(imagePath: string): Promise<string> {
+async function generateInteriorImage(imagePath: string): Promise<GeneratedImage> {
   try {
     return await generateInterior(imagePath);
   } catch (error) {
-    throw new Error("Не удалось передать изображение в AI. Попробуйте позже.", {
+    throw new Error("Не удалось сгенерировать интерьер через AI. Попробуйте позже.", {
       cause: error,
     });
   }

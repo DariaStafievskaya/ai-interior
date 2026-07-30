@@ -1,34 +1,17 @@
 import { Bot } from "grammy";
-import { downloadTelegramPhoto } from "../services/telegram";
-import { generateInterior } from "../services/ai";
+import { processInteriorGeneration } from "../services/interior-generation";
 
 export function registerPhotoHandler(bot: Bot) {
   bot.on("message:photo", async (ctx) => {
-    const photos = ctx.message.photo;
-    const photo = photos.at(-1);
+    const photo = ctx.message.photo.at(-1);
 
     if (!photo) {
       await ctx.reply("Не удалось получить фотографию. Попробуйте еще раз.");
       return;
     }
 
-    console.log("Получено фото:");
-    console.log("file_id:", photo.file_id);
-    console.log("Размер:", photo.width, "x", photo.height);
+    const result = await processInteriorGeneration(ctx.api, photo.file_id);
 
-    const localPath = await downloadTelegramPhoto(
-      ctx.api,
-      photo.file_id
-    );
-
-    console.log("Файл сохранен:", localPath);
-
-    const resultPath = await generateInterior(localPath);
-
-    console.log("AI вернул:", resultPath);
-
-    await ctx.reply(
-      "🤖 Изображение передано в AI.\n\nСледующим шагом мы подключим настоящий Fal.ai."
-    );
+    await ctx.reply(result.message);
   });
 }
